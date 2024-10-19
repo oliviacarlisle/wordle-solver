@@ -1,0 +1,24 @@
+{
+  "name": "wordle-solver",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oliviacarlisle/wordle-solver.git"
+  },
+  "author": "Olivia Carlisle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oliviacarlisle/wordle-solver/issues"
+  },
+  "homepage": "https://github.com/oliviacarlisle/wordle-solver#readme"
+}
