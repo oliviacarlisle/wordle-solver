@@ -76,4 +76,26 @@ describe('generateFeedback', () => {
       expect(generateFeedback('yoyos', 'fully')).toEqual(feedback);
     });
   });
+
+  describe('Repeated letters (additional tests)', () => {
+    it('should generate correct feedback for "speed" and "abide"', () => {
+      const feedback: Feedback = ['x', 'x', 'y', 'x', 'y'];
+      expect(generateFeedback('speed', 'abide')).toEqual(feedback);
+    });
+
+    it('should generate correct feedback for "speed" and "erase"', () => {
+      const feedback: Feedback = ['y', 'x', 'y', 'y', 'x'];
+      expect(generateFeedback('speed', 'erase')).toEqual(feedback);
+    });
+
+    it('should generate correct feedback for "speed" and "steal"', () => {
+      const feedback: Feedback = ['g', 'x', 'g', 'x', 'x'];
+      expect(generateFeedback('speed', 'steal')).toEqual(feedback);
+    });
+
+    it('should generate correct feedback for "speed" and "crepe"', () => {
+      const feedback: Feedback = ['x', 'y', 'g', 'y', 'x'];
+      expect(generateFeedback('speed', 'crepe')).toEqual(feedback);
+    });
+  });
 });
