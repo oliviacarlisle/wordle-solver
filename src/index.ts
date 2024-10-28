@@ -12,6 +12,7 @@ const prevGuesses: GuessWithFeedback[] = [
 ];
 
 const start = performance.now();
-getTopGuesses(wordList, wordScores, prevGuesses, LIMIT);
+const topGuesses = getTopGuesses(wordList, wordScores, prevGuesses, LIMIT);
+console.table(topGuesses);
 const end = performance.now();
 console.log(`getTopGuesses: ${end - start}`);

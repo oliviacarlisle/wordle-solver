@@ -10,7 +10,7 @@ export function getTopGuesses(
   wordScores: Map<string, number>,
   previousGuesses: GuessWithFeedback[],
   limit: number,
-): void {
+): [string, number, number, number][] {
   // Filter words based on previous guesses
 
   const remainingWords = filterWords([...wordScores.keys()], previousGuesses);
@@ -56,5 +56,5 @@ export function getTopGuesses(
 
   guessScores.sort((a, b) => b[1] - a[1]);
 
-  console.table(guessScores.slice(0, limit));
+  return guessScores.slice(0, limit);
 }
