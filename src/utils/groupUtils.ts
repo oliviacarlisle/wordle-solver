@@ -1,13 +1,17 @@
-import { generateFeedback } from './feedbackUtils';
+import { hashFeedback, generateFeedback } from './feedbackUtils';
 
-export const groupByPattern = (guess: string, possibilities: string[]): Map<string, string[]> => {
-  const groups = new Map<string, string[]>();
+export const findGroups = (
+  guess: string,
+  wordScores: Map<string, number>,
+  possibilities: string[],
+): Record<number, number> => {
+  const groups: Record<number, number> = {};
 
   for (const solution of possibilities) {
-    const pattern = generateFeedback(guess, solution).join();
+    const pattern = hashFeedback(generateFeedback(guess, solution));
 
-    if (!groups.has(pattern)) groups.set(pattern, []);
-    groups.get(pattern)!.push(solution);
+    if (!groups[pattern]) groups[pattern] = 0;
+    groups[pattern] += wordScores.get(solution)!;
   }
 
   return groups;

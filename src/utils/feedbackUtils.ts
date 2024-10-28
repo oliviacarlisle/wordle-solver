@@ -1,24 +1,29 @@
-import type { Feedback } from '../types/index';
+export function hashFeedback(feedback: Uint8Array): number {
+  return feedback[0] * 81 + feedback[1] * 27 + feedback[2] * 9 + feedback[3] * 3 + feedback[4];
+}
 
 // Function to generate feedback for a guess against a solution
-export function generateFeedback(guess: string, solution: string): Feedback {
-  const feedback: Feedback = ['x', 'x', 'x', 'x', 'x'];
-  const letterCounts: Record<string, number> = {};
+export function generateFeedback(guess: string, solution: string): Uint8Array {
+  const feedback = new Uint8Array(5);
+  const counts = new Uint8Array(26); // Pre-allocated array for letter counts
 
   // First pass: mark correct positions and count remaining letters
   for (let i = 0; i < 5; i++) {
     if (guess[i] === solution[i]) {
-      feedback[i] = 'g';
+      feedback[i] = 1;
     } else {
-      letterCounts[solution[i]] = (letterCounts[solution[i]] || 0) + 1;
+      counts[solution.charCodeAt(i) - 97]++;
     }
   }
 
   // Second pass: mark correct letters in wrong positions
   for (let i = 0; i < 5; i++) {
-    if (feedback[i] === 'x' && letterCounts[guess[i]]) {
-      feedback[i] = 'y';
-      letterCounts[guess[i]]--;
+    if (feedback[i] === 0) {
+      const idx = guess.charCodeAt(i) - 97;
+      if (counts[idx] > 0) {
+        feedback[i] = 2;
+        counts[idx]--;
+      }
     }
   }
 

@@ -12,16 +12,16 @@ export function filterWords(words: string[], guesses: GuessWithFeedback[]): stri
 function filterHelper(words: string[], guessWithFeedback: GuessWithFeedback): string[] {
   return words.filter((word) => {
     for (let i = 0; i < 5; i++) {
-      if (guessWithFeedback.feedback[i] === 'g' && word[i] !== guessWithFeedback.word[i]) {
+      if (guessWithFeedback.feedback[i] === 1 && word[i] !== guessWithFeedback.word[i]) {
         return false;
       }
       if (
-        guessWithFeedback.feedback[i] === 'y' &&
+        guessWithFeedback.feedback[i] === 2 &&
         (!word.includes(guessWithFeedback.word[i]) || word[i] === guessWithFeedback.word[i])
       ) {
         return false;
       }
-      if (guessWithFeedback.feedback[i] === 'x' && word.includes(guessWithFeedback.word[i])) {
+      if (guessWithFeedback.feedback[i] === 0 && word.includes(guessWithFeedback.word[i])) {
         return false;
       }
     }
