@@ -29,10 +29,6 @@ export function getTopGuesses(
   for (const guess of wordList) {
     const groups = findGroups(guess, wordScores, remainingWords);
 
-    if (guess === 'badly' || guess === 'budge') {
-      console.log(guess, groups);
-    }
-
     const groupProbabilities: number[] = [];
 
     for (const groupScore of Object.values(groups)) {
@@ -45,7 +41,9 @@ export function getTopGuesses(
     }, 0);
 
     // probability that this guess could be the correct solution (higher is better)
-    const pGuess = remainingSet.has(guess) ? (wordScores.get(guess) ?? 0) / totalScore : 0;
+    const pGuess = remainingSet.has(guess)
+      ? (wordScores.get(guess) ?? 0) / totalScore
+      : 0;
 
     // score blending both factors (higher is better)
     const score = pGuess + infoGain;
@@ -58,7 +56,5 @@ export function getTopGuesses(
 
   guessScores.sort((a, b) => b[1] - a[1]);
 
-  console.log(guessScores.find((a) => a[0] === 'budge'));
-
-  console.log(guessScores.slice(0, limit));
+  console.table(guessScores.slice(0, limit));
 }
