@@ -1,30 +1,27 @@
 import type { GuessWithFeedback } from '../types/index';
+import { hashFeedback, generateFeedback } from './feedbackUtils';
 
-export function filterWords(words: string[], guesses: GuessWithFeedback[]): string[] {
+export function filterWords(
+  words: string[],
+  guesses: GuessWithFeedback[],
+): string[] {
   for (const guess of guesses) {
-    words = filterHelper(words, guess);
+    words = words.filter((word) => isPossibility(word, guess));
   }
 
   return words;
 }
 
 // Function to filter words based on feedback
-function filterHelper(words: string[], guessWithFeedback: GuessWithFeedback): string[] {
-  return words.filter((word) => {
-    for (let i = 0; i < 5; i++) {
-      if (guessWithFeedback.feedback[i] === 1 && word[i] !== guessWithFeedback.word[i]) {
-        return false;
-      }
-      if (
-        guessWithFeedback.feedback[i] === 2 &&
-        (!word.includes(guessWithFeedback.word[i]) || word[i] === guessWithFeedback.word[i])
-      ) {
-        return false;
-      }
-      if (guessWithFeedback.feedback[i] === 0 && word.includes(guessWithFeedback.word[i])) {
-        return false;
-      }
-    }
-    return true;
-  });
+function isPossibility(
+  word: string,
+  guessWithFeedback: GuessWithFeedback,
+): boolean {
+  const { word: guessWord, feedback } = guessWithFeedback;
+
+  const actualFeedback = hashFeedback(generateFeedback(guessWord, word));
+  const expectedFeedback = hashFeedback(feedback);
+
+  // compare feedback with actualFeedback
+  return expectedFeedback === actualFeedback;
 }

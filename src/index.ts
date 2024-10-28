@@ -6,7 +6,9 @@ import type { GuessWithFeedback } from './types/index';
 const LIMIT = 15;
 
 const prevGuesses: GuessWithFeedback[] = [
-  { word: 'tares', feedback: [0, 1, 0, 0, 0] },
+  { word: 'horse', feedback: new Uint8Array([0, 0, 0, 0, 0]) },
+  { word: 'dizzy', feedback: new Uint8Array([2, 0, 0, 0, 1]) },
+  { word: 'muddy', feedback: new Uint8Array([0, 0, 0, 1, 1]) },
 ];
 
 const start = performance.now();
