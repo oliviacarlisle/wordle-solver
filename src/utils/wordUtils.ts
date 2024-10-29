@@ -16,13 +16,19 @@ export function getTopGuesses(
 
   const remainingWords = filterWords([...wordScores.keys()], previousGuesses);
 
-  console.log('Possibilities remaining', remainingWords.length);
-  console.log(remainingWords);
+  console.log('Possible solutions remaining:', remainingWords.length);
+
   const remainingSet = new Set(remainingWords);
 
   const [uncertainty, totalScore] = calcEntropy(remainingWords, wordScores);
 
-  console.log('remaining uncertainty (bits)', uncertainty);
+  console.log(
+    'Uncertainty remaining:',
+    Math.trunc(uncertainty * 100) / 100,
+    'bits',
+  );
+
+  console.log('All possible solutions:\n', remainingWords);
 
   const guessScores: [string, number, number, number][] = [];
 
@@ -74,11 +80,11 @@ export function getTopGuesses(
   bar.update(wordList.length);
 
   const end = performance.now();
-  console.log(`main loop: ${end - start}`);
+  console.log('Main loop:', Math.trunc(end - start), 'ms');
 
   guessScores.sort((a, b) => b[1] - a[1]);
 
-  const formatNum = (num: number, digits = 4) =>
+  const formatNum = (num: number, digits = 7) =>
     Math.trunc(num * 10 ** digits) / 10 ** digits;
 
   return guessScores

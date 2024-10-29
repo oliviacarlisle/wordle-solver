@@ -23,7 +23,7 @@ export class WordleSolver {
         this.limit,
       );
       const end = performance.now();
-      console.log(`time: ${end - start}`);
+      console.log('Total time:', Math.trunc(end - start), 'ms');
 
       return results;
     } catch (e) {
