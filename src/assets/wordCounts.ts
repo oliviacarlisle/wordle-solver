@@ -1,3 +1,7 @@
+import offensiveWords from './offensiveWords';
+
+const exclude = new Set(offensiveWords);
+
 export const wordCounts: [string, number][] = [
   ['which', 95386910],
   ['their', 92582595],
@@ -13560,4 +13564,4 @@ export const wordCounts: [string, number][] = [
   ['wocks', 10],
   ['twoer', 10],
   ['ureic', 10],
-];
+].filter((w) => !exclude.has(w[0] as string)) as [string, number][];
