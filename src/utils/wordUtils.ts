@@ -1,6 +1,6 @@
 // Define types
 import type { GuessWithFeedback } from '../types/index';
-import { findGroups } from './groupUtils';
+import { generateFeedback, hashFeedback } from './feedbackUtils';
 import { filterWords } from './filterUtils';
 import { calcEntropy } from './entropyUtils';
 import { ProgressBar } from './ProgressBar';
@@ -28,26 +28,36 @@ export function getTopGuesses(
 
   const start = performance.now();
 
-  const groups = new Float32Array(243);
-
   const bar = new ProgressBar(wordList.length);
 
+  // initialize and allocate groups scores array
+  const groups = new Float32Array(243);
+
   for (let i = 0; i < wordList.length; i++) {
+    // Update progress bar
     if (i % 64 === 0) bar.update(i);
+
     const guess = wordList[i];
-    // reset groups to 0
+
+    // reset groups to 0 - reuse array to reduce memory allocation
     for (let i = 0; i < groups.length; i++) {
       groups[i] = 0;
     }
 
-    findGroups(guess, wordScores, remainingWords, groups);
+    for (let i = 0; i < remainingWords.length; i++) {
+      const solution = remainingWords[i];
+      const patternIdx = hashFeedback(generateFeedback(guess, solution));
+
+      if (!groups[patternIdx]) groups[patternIdx] = 0;
+      groups[patternIdx] += wordScores.get(solution) ?? 0;
+    }
 
     // calculate expected information gain for this guess (higher is better)
     let infoGain = 0;
     for (let i = 0; i < groups.length; i++) {
       if (groups[i] > 0) {
         const p = groups[i] / totalScore;
-        infoGain += p * Math.log2(1 / p);
+        infoGain += p * Math.log2(1 / p); // entropy calculation
       }
     }
 
