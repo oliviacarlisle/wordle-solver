@@ -11,7 +11,8 @@
     "test": "jest",
     "dev": "tsx src/index.ts",
     "dev:bun": "bun run src/index.ts",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "tsx src/index.ts"
   },
   "repository": {
     "type": "git",
