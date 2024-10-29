@@ -1,3 +1,7 @@
+import offensiveWords from './offensiveWords';
+
+const exclude = new Set(offensiveWords);
+
 export const wordList: string[] = [
   'aahed',
   'aalii',
@@ -14854,4 +14858,4 @@ export const wordList: string[] = [
   'flack',
   'widow',
   'augur',
-];
+].filter((w) => !exclude.has(w));

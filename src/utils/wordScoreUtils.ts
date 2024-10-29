@@ -1,4 +1,5 @@
 import { wordCounts } from '../assets/wordCounts';
+import excludeList from '../assets/excludeList';
 
 function sigmoidWordScorer(
   wordCounts: [string, number][],
@@ -6,7 +7,10 @@ function sigmoidWordScorer(
   midpoint: number,
 ): Map<string, number> {
   // Find the maximum count for normalization
-  const maxCount = wordCounts.reduce((max, [, count]) => Math.max(count, max), -Infinity);
+  const maxCount = wordCounts.reduce(
+    (max, [, count]) => Math.max(count, max),
+    -Infinity,
+  );
 
   // Calculate sigmoid for a normalized value
   const sigmoid = (x: number): number => 1 / (1 + Math.exp(-x));
@@ -15,6 +19,7 @@ function sigmoidWordScorer(
   const scoredWords = new Map<string, number>();
 
   for (const [word, count] of wordCounts) {
+    if (excludeList.has(word)) continue;
     // Normalize the count and apply sigmoid
     const normalizedCount = Math.log2(count) / Math.log2(maxCount);
     const score = sigmoid(steepness * (normalizedCount - midpoint)); // Adjust the range for better distribution

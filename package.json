@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "bun src/index.ts",
+    "dev": "bun run src/index.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
   },
   "repository": {
