@@ -4,15 +4,13 @@ export const findGroups = (
   guess: string,
   wordScores: Map<string, number>,
   possibilities: string[],
-): Record<number, number> => {
-  const groups: Record<number, number> = {};
+  groups: Float32Array,
+): void => {
+  for (let i = 0; i < possibilities.length; i++) {
+    const solution = possibilities[i];
+    const patternIdx = hashFeedback(generateFeedback(guess, solution));
 
-  for (const solution of possibilities) {
-    const pattern = hashFeedback(generateFeedback(guess, solution));
-
-    if (!groups[pattern]) groups[pattern] = 0;
-    groups[pattern] += wordScores.get(solution)!;
+    if (!groups[patternIdx]) groups[patternIdx] = 0;
+    groups[patternIdx] += wordScores.get(solution) ?? 0;
   }
-
-  return groups;
 };

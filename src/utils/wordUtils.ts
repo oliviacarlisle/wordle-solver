@@ -3,6 +3,7 @@ import type { GuessWithFeedback } from '../types/index';
 import { findGroups } from './groupUtils';
 import { filterWords } from './filterUtils';
 import { calcEntropy } from './entropyUtils';
+import { ProgressBar } from './ProgressBar';
 
 // Function to get the top 10 optimal guesses
 export function getTopGuesses(
@@ -26,19 +27,29 @@ export function getTopGuesses(
   const guessScores: [string, number, number, number][] = [];
 
   const start = performance.now();
-  for (const guess of wordList) {
-    const groups = findGroups(guess, wordScores, remainingWords);
 
-    const groupProbabilities: number[] = [];
+  const groups = new Float32Array(243);
 
-    for (const groupScore of Object.values(groups)) {
-      groupProbabilities.push(groupScore / totalScore);
+  const bar = new ProgressBar(wordList.length);
+
+  for (let i = 0; i < wordList.length; i++) {
+    if (i % 64 === 0) bar.update(i);
+    const guess = wordList[i];
+    // reset groups to 0
+    for (let i = 0; i < groups.length; i++) {
+      groups[i] = 0;
     }
 
-    // expected information fain for this guess (higher is better)
-    const infoGain = groupProbabilities.reduce((acc, p) => {
-      return acc + p * Math.log2(1 / p);
-    }, 0);
+    findGroups(guess, wordScores, remainingWords, groups);
+
+    // calculate expected information gain for this guess (higher is better)
+    let infoGain = 0;
+    for (let i = 0; i < groups.length; i++) {
+      if (groups[i] > 0) {
+        const p = groups[i] / totalScore;
+        infoGain += p * Math.log2(1 / p);
+      }
+    }
 
     // probability that this guess could be the correct solution (higher is better)
     const pGuess = remainingSet.has(guess)
@@ -50,6 +61,7 @@ export function getTopGuesses(
 
     guessScores.push([guess, score, pGuess, infoGain]);
   }
+  bar.update(wordList.length);
 
   const end = performance.now();
   console.log(`main loop: ${end - start}`);
