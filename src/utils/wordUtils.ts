@@ -68,5 +68,15 @@ export function getTopGuesses(
 
   guessScores.sort((a, b) => b[1] - a[1]);
 
-  return guessScores.slice(0, limit);
+  const formatNum = (num: number, digits = 4) =>
+    Math.trunc(num * 10 ** digits) / 10 ** digits;
+
+  return guessScores
+    .slice(0, limit)
+    .map((row) => [
+      row[0],
+      formatNum(row[1]),
+      formatNum(row[2]),
+      formatNum(row[3]),
+    ]);
 }
