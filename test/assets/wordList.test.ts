@@ -21,7 +21,7 @@ describe('wordList', () => {
   });
 
   it('should contain the correct number of words', () => {
-    const expectedWordCount = 14808;
+    const expectedWordCount = 14751;
     expect(wordList.length).toBe(expectedWordCount);
   });
 

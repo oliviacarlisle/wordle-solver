@@ -2,6 +2,65 @@
 
 An efficient Wordle solver that uses information theory to determine optimal guesses. The algorithm strategically minimizes the search space by maximizing information gain with each guess, consistently solving puzzles in 3-4 attempts.
 
+# Getting Started
+
+To calculate the initial best guess:
+
+```typescript
+import { WordleSolver } from './WordleSolver';
+
+const wordle = new WordleSolver();
+
+const results = wordle.solve([]);
+
+console.table(results);
+```
+
+Output:
+
+```bash
+> wordle-solver@1.0.0 dev:bun
+> bun run src/index.ts
+
+Possible solutions remaining: 13449
+Uncertainty remaining: 12.28 bits
+All possible solutions:
+ [
+  "which", "their", "there", "would", "about", "could", "other", "these", "after", "first", "where", "those",
+  "being", "while", "right", "still", "world", "never", "think", "again", "three", "under", "might", "state",
+  "going", "place", "great", "found", "every", "since", "water", "asked", "power", "based", "human", "small",
+  "house", "women", "table", "often", "using", "order", "point", "given", "until", "large", "young", "group",
+  "study", "night", "heart", "among", "press", "later", "woman", "thing", "light", "white", "early", "times",
+  "level", "hands", "black", "model", "value", "along", "least", "means", "shall", "known", "voice", "child",
+  "whole", "above", "death", "sense", "taken", "front", "heard", "began", "court", "doing", "money", "local",
+  "close", "space", "party", "short", "leave", "blood", "quite", "clear", "terms", "story", "class", "field",
+  "cases", "today", "south", "stood",
+  ... 13349 more items
+]
+Progress: |████████████████████████████████████████| 100.0% | 14808/14808 | ETA: 0.0s
+Main loop: 9206 ms
+Total time: 9211 ms
+┌────┬───────┬───────────┬───────────┬───────────┐
+│    │ 0     │ 1         │ 2         │ 3         │
+├────┼───────┼───────────┼───────────┼───────────┤
+│  0 │ tares │ 6.2918578 │ 0.0000525 │ 6.2918053 │
+│  1 │ lares │ 6.2116286 │ 0.0000333 │ 6.2115953 │
+│  2 │ rates │ 6.1856232 │ 0         │ 6.1856232 │
+│  3 │ tears │ 6.1711465 │ 0         │ 6.1711465 │
+│  4 │ rales │ 6.1687789 │ 0.0000268 │ 6.168752  │
+│  5 │ ranes │ 6.1471763 │ 6e-7      │ 6.1471756 │
+│  6 │ tales │ 6.1471463 │ 0         │ 6.1471463 │
+│  7 │ salet │ 6.1455526 │ 0.0000026 │ 6.14555   │
+│  8 │ teras │ 6.1444465 │ 0.0000053 │ 6.1444411 │
+│  9 │ sater │ 6.1365157 │ 0.0000335 │ 6.1364822 │
+│ 10 │ arles │ 6.1341683 │ 0.000099  │ 6.1340692 │
+│ 11 │ soare │ 6.1264771 │ 0.0000072 │ 6.1264698 │
+│ 12 │ nares │ 6.1203493 │ 0.0000637 │ 6.1202855 │
+│ 13 │ tarse │ 6.1199568 │ 8e-7      │ 6.1199559 │
+│ 14 │ saner │ 6.0994277 │ 0.0000465 │ 6.0993811 │
+└────┴───────┴───────────┴───────────┴───────────┘
+```
+
 # Example
 
 ```typescript

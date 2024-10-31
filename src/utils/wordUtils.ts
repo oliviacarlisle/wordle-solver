@@ -34,6 +34,7 @@ export function getTopGuesses(
 
   const start = performance.now();
 
+  console.log('Computing optimal guesses...');
   const bar = new ProgressBar(wordList.length);
 
   // initialize and allocate groups scores array
