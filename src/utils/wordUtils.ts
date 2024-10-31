@@ -54,23 +54,29 @@ export function getTopGuesses(
 
   const remainingSet = new Set(remainingWordsOptimized);
 
+  const remainingLen = remainingWordsOptimized.length;
+
+  // Pre-calculate scores for remaining words
+  const remainingScores = new Float32Array(remainingLen);
+  for (let i = 0; i < remainingLen; i++) {
+    remainingScores[i] =
+      wordScoresOptimized.get(remainingWordsOptimized[i]) ?? 0;
+  }
+
   for (let i = 0; i < wordListOptimized.length; i++) {
     // Update progress bar
-    if (i % 64 === 0) bar.update(i);
+    if (i % 128 === 0) bar.update(i);
 
     const guess = wordListOptimized[i];
 
     // reset groups to 0 - reuse array to reduce memory allocation
-    for (let i = 0; i < groups.length; i++) {
-      groups[i] = 0;
-    }
+    groups.fill(0);
 
-    for (let i = 0; i < remainingWordsOptimized.length; i++) {
-      const solution = remainingWordsOptimized[i];
+    for (let j = 0; j < remainingLen; j++) {
+      const solution = remainingWordsOptimized[j];
       const patternIdx = hashFeedback(generateFeedbackNums(guess, solution));
 
-      if (!groups[patternIdx]) groups[patternIdx] = 0;
-      groups[patternIdx] += wordScoresOptimized.get(solution) ?? 0;
+      groups[patternIdx] += remainingScores[j];
     }
 
     // calculate expected information gain for this guess (higher is better)
@@ -92,6 +98,7 @@ export function getTopGuesses(
 
     guessScores.push([guess, score, pGuess, infoGain]);
   }
+
   bar.update(wordList.length);
 
   const end = performance.now();

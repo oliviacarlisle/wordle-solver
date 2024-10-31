@@ -10,13 +10,16 @@ export function hashFeedback(feedback: Uint8Array): number {
   );
 }
 
+const feedback = new Uint8Array(5);
+const counts = new Uint8Array(26); // Pre-allocated array for letter counts
+
 // Function to generate feedback for a guess against a solution
 export function generateFeedbackNums(
   guess: number,
   solution: number,
 ): Uint8Array {
-  const feedback = new Uint8Array(5);
-  const counts = new Uint8Array(26); // Pre-allocated array for letter counts
+  feedback.fill(0);
+  counts.fill(0);
 
   // First pass: mark correct positions and count remaining letters
   for (let i = 0; i < 5; i++) {
