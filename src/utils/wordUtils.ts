@@ -1,9 +1,14 @@
 // Define types
 import type { GuessWithFeedback } from '../types/index';
-import { generateFeedback, hashFeedback } from './feedbackUtils';
+import { generateFeedbackNums, hashFeedback } from './feedbackUtils';
 import { filterWords } from './filterUtils';
 import { calcEntropy } from './entropyUtils';
 import { ProgressBar } from './ProgressBar';
+import {
+  convertNumToWord,
+  convertWordToNum,
+  convertWordListToNumArray,
+} from './conversions';
 
 // Function to get the top 10 optimal guesses
 export function getTopGuesses(
@@ -18,8 +23,6 @@ export function getTopGuesses(
 
   console.log('Possible solutions remaining:', remainingWords.length);
 
-  const remainingSet = new Set(remainingWords);
-
   const [uncertainty, totalScore] = calcEntropy(remainingWords, wordScores);
 
   console.log(
@@ -30,7 +33,7 @@ export function getTopGuesses(
 
   console.log('All possible solutions:\n', remainingWords);
 
-  const guessScores: [string, number, number, number][] = [];
+  const guessScores: [number, number, number, number][] = [];
 
   const start = performance.now();
 
@@ -40,23 +43,40 @@ export function getTopGuesses(
   // initialize and allocate groups scores array
   const groups = new Float32Array(243);
 
-  for (let i = 0; i < wordList.length; i++) {
-    // Update progress bar
-    if (i % 64 === 0) bar.update(i);
+  const wordScoresOptimized = new Map<number, number>();
 
-    const guess = wordList[i];
+  wordScores.forEach((val, key) => {
+    wordScoresOptimized.set(convertWordToNum(key), val);
+  });
+
+  const wordListOptimized = convertWordListToNumArray(wordList);
+  const remainingWordsOptimized = convertWordListToNumArray(remainingWords);
+
+  const remainingSet = new Set(remainingWordsOptimized);
+
+  const remainingLen = remainingWordsOptimized.length;
+
+  // Pre-calculate scores for remaining words
+  const remainingScores = new Float32Array(remainingLen);
+  for (let i = 0; i < remainingLen; i++) {
+    remainingScores[i] =
+      wordScoresOptimized.get(remainingWordsOptimized[i]) ?? 0;
+  }
+
+  for (let i = 0; i < wordListOptimized.length; i++) {
+    // Update progress bar
+    if (i % 128 === 0) bar.update(i);
+
+    const guess = wordListOptimized[i];
 
     // reset groups to 0 - reuse array to reduce memory allocation
-    for (let i = 0; i < groups.length; i++) {
-      groups[i] = 0;
-    }
+    groups.fill(0);
 
-    for (let i = 0; i < remainingWords.length; i++) {
-      const solution = remainingWords[i];
-      const patternIdx = hashFeedback(generateFeedback(guess, solution));
+    for (let j = 0; j < remainingLen; j++) {
+      const solution = remainingWordsOptimized[j];
+      const patternIdx = hashFeedback(generateFeedbackNums(guess, solution));
 
-      if (!groups[patternIdx]) groups[patternIdx] = 0;
-      groups[patternIdx] += wordScores.get(solution) ?? 0;
+      groups[patternIdx] += remainingScores[j];
     }
 
     // calculate expected information gain for this guess (higher is better)
@@ -70,7 +90,7 @@ export function getTopGuesses(
 
     // probability that this guess could be the correct solution (higher is better)
     const pGuess = remainingSet.has(guess)
-      ? (wordScores.get(guess) ?? 0) / totalScore
+      ? (wordScoresOptimized.get(guess) ?? 0) / totalScore
       : 0;
 
     // score blending both factors (higher is better)
@@ -78,6 +98,7 @@ export function getTopGuesses(
 
     guessScores.push([guess, score, pGuess, infoGain]);
   }
+
   bar.update(wordList.length);
 
   const end = performance.now();
@@ -91,7 +112,7 @@ export function getTopGuesses(
   return guessScores
     .slice(0, limit)
     .map((row) => [
-      row[0],
+      convertNumToWord(row[0]),
       formatNum(row[1]),
       formatNum(row[2]),
       formatNum(row[3]),
