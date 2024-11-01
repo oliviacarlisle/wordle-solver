@@ -1,7 +1,9 @@
+import type { GuessInfo } from './types/index';
 import { WordleSolver } from './WordleSolver';
 
-const wordle = new WordleSolver();
+const feedbackArray: GuessInfo[] = [];
 
-const results = wordle.solve([]);
+const wordle = new WordleSolver();
+const results = wordle.solve(feedbackArray);
 
 console.table(results);
